@@ -1,0 +1,61 @@
+:root {
+    --orange: #ff6243;
+    --dark-bg: #0d0d11;
+    --text-light: #eaeaea;
+}
+
+body {
+    margin: 0;
+    background: var(--dark-bg);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+.card-container {
+    perspective: 1200px;
+}
+
+.card {
+    width: 340px;
+    height: 160px;
+    background: linear-gradient(145deg, #13131a, #0c0c10);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow:
+        0 0 10px rgba(0, 0, 0, 0.2),
+        inset 0 0 10px rgba(255, 98, 67, 0.03);
+    transition: transform 0.25s ease, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-text {
+    font-size: 48px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--text-light);
+    display: flex;
+    gap: 1px;
+    align-items: center;
+    justify-content: center;
+}
+
+.t {
+    color: var(--orange);
+    font-weight: 700;
+    font-size: 54px;
+    letter-spacing: 1px;
+    text-shadow:
+        0 1px 3px rgba(255, 98, 67, 0.4),
+        0 2px 4px rgba(255, 98, 67, 0.1);
+}
+
+.f {
+    color: var(--orange);
+    font-weight: 600;
+}
