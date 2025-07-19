@@ -1,61 +1,66 @@
 :root {
     --orange: #ff6243;
-    --dark-bg: #0d0d11;
-    --text-light: #eaeaea;
+    --bg-dark: #0b0b0f;
+    --text-color: #f4f4f4;
 }
 
 body {
     margin: 0;
-    background: var(--dark-bg);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-color: var(--bg-dark);
     font-family: 'Poppins', sans-serif;
+    height: 100vh;
+    overflow: hidden;
 }
 
-.card-container {
-    perspective: 1200px;
-}
-
-.card {
-    width: 340px;
-    height: 160px;
-    background: linear-gradient(145deg, #13131a, #0c0c10);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    box-shadow:
-        0 0 10px rgba(0, 0, 0, 0.2),
-        inset 0 0 10px rgba(255, 98, 67, 0.03);
-    transition: transform 0.25s ease, box-shadow 0.3s ease;
-    transform-style: preserve-3d;
+.wrapper {
+    perspective: 1000px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    height: 100vh;
+    padding-top: 80px;
+    position: relative;
+}
+
+/* backlight glow effect behind the text */
+.glow-behind {
+    position: absolute;
+    top: 65px;
+    width: 300px;
+    height: 120px;
+    background: radial-gradient(ellipse at center, rgba(255, 98, 67, 0.25), transparent 60%);
+    filter: blur(40px);
+    z-index: 0;
+}
+
+/* 3D text container */
+.floating-text {
+    transform-style: preserve-3d;
+    transition: transform 0.15s ease-out;
+    will-change: transform;
+    z-index: 1;
 }
 
 .logo-text {
-    font-size: 48px;
+    font-size: 56px;
     font-weight: 600;
-    letter-spacing: 0.5px;
-    color: var(--text-light);
+    letter-spacing: 1px;
+    color: var(--text-color);
     display: flex;
-    gap: 1px;
     align-items: center;
-    justify-content: center;
+    gap: 2px;
 }
 
 .t {
     color: var(--orange);
+    font-size: 60px;
     font-weight: 700;
-    font-size: 54px;
-    letter-spacing: 1px;
     text-shadow:
-        0 1px 3px rgba(255, 98, 67, 0.4),
-        0 2px 4px rgba(255, 98, 67, 0.1);
+        0 1px 2px rgba(255, 98, 67, 0.4),
+        0 2px 4px rgba(255, 98, 67, 0.2);
 }
 
 .f {
     color: var(--orange);
-    font-weight: 600;
+    text-shadow: 0 0 3px rgba(255, 98, 67, 0.2);
 }
