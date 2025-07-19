@@ -15,15 +15,15 @@ function type() {
     if (!isDeleting) {
         if (charIndex < current.length) {
             charIndex++;
-            setTimeout(type, 120);
+            setTimeout(type, 110);
         } else {
             isDeleting = true;
-            setTimeout(type, 1200);
+            setTimeout(type, 1300);
         }
     } else {
         if (charIndex > 0) {
             charIndex--;
-            setTimeout(type, 50);
+            setTimeout(type, 45);
         } else {
             isDeleting = false;
             wordIndex = (wordIndex + 1) % words.length;
@@ -34,14 +34,14 @@ function type() {
 
 type();
 
-// Hover 3D effect on the logo
+// 3D hover effect
 hero.addEventListener("mousemove", (e) => {
     const rect = hero.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
 
-    const rotateX = (0.5 - y) * 50;
-    const rotateY = (x - 0.5) * 50;
+    const rotateX = (0.5 - y) * 60;
+    const rotateY = (x - 0.5) * 60;
 
     hero.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
 });
