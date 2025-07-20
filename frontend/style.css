@@ -1,14 +1,14 @@
 :root {
   --bg-dark: #060608;
   --text-color: #f4f4f4;
+  --primary: #438bff;
+  --accent: #ffffff;
 }
 
 body {
   margin: 0;
   background-color: var(--bg-dark);
   font-family: 'Poppins', sans-serif;
-  height: 100vh;
-  overflow: hidden;
   color: var(--text-color);
 }
 
@@ -18,25 +18,26 @@ body {
   align-items: center;
   height: 100vh;
   justify-content: center;
-  position: relative;
+  text-align: center;
+  padding: 20px;
 }
 
 .traffy-container {
-  transform-style: preserve-3d;
-  z-index: 2;
   animation: flyDown 2.8s ease-out;
 }
 
-/* Only move it, don't hide it */
 @keyframes flyDown {
   0% {
     transform: translateY(-100px);
+    opacity: 0;
   }
   60% {
     transform: translateY(10px);
+    opacity: 0.8;
   }
   100% {
     transform: translateY(0);
+    opacity: 1;
   }
 }
 
@@ -45,19 +46,19 @@ body {
   font-weight: 800;
   display: flex;
   gap: 5px;
-  text-shadow:
+  justify-content: center;
 }
 
 .logo-text span {
-  color: #438bff;
+  color: var(--primary);
   display: inline-block;
   animation: waveHighlight 2s infinite ease-in-out;
-  animation-delay: 2.8s; /* starts after fly-in ends */
+  animation-delay: 2.8s;
   will-change: filter, text-shadow;
 }
 
 .logo-text span:nth-child(1) { animation-delay: 2.8s; }
-logo-text span:nth-child(2) { animation-delay: 2.95s; }
+.logo-text span:nth-child(2) { animation-delay: 2.95s; }
 .logo-text span:nth-child(3) { animation-delay: 3.1s; }
 .logo-text span:nth-child(4) { animation-delay: 3.25s; }
 .logo-text span:nth-child(5) { animation-delay: 3.4s; }
@@ -65,23 +66,20 @@ logo-text span:nth-child(2) { animation-delay: 2.95s; }
 
 @keyframes waveHighlight {
   0%, 100% {
-    color: #438bff;
+    color: var(--primary);
     text-shadow: none;
     filter: brightness(1);
-    transform: none;
   }
   50% {
-    color: white;
+    color: var(--accent);
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
     filter: brightness(1.3);
-    transform: scale(1.01); /* super tiny scale to avoid shaking */
+    transform: scale(1.01);
   }
 }
 
 .typewriter-box {
   margin-top: 80px;
-  text-align: center;
-  z-index: 2;
 }
 
 .subtitle {
@@ -95,13 +93,14 @@ logo-text span:nth-child(2) { animation-delay: 2.95s; }
   font-weight: bold;
   height: 40px;
   margin-bottom: 30px;
-  color: #fff;
+  color: var(--accent);
 }
 
 .buttons {
   display: flex;
   justify-content: center;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
 .btn {
@@ -112,20 +111,53 @@ logo-text span:nth-child(2) { animation-delay: 2.95s; }
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: none;
 }
 
 .btn:hover {
   transform: translateY(-2px);
 }
 
-.btn.dark {
-  background-color: black;
-  color: white;
-  border: 1px solid white;
+.btn.primary {
+  background-color: var(--primary);
+  color: #fff;
 }
 
-.btn.light {
-  background-color: white;
-  color: black;
-  border: 1px solid black;
+.btn.secondary {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+}
+
+/* Features section */
+.features {
+  padding: 80px 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 36px;
+  margin-bottom: 40px;
+  color: var(--accent);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.feature-card {
+  background: #111;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  color: var(--accent);
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
 }
