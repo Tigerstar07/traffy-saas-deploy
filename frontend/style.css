@@ -10,13 +10,14 @@ body {
   background-color: var(--bg-dark);
   font-family: 'Poppins', sans-serif;
   color: var(--text-color);
+  overflow-x: hidden;
 }
 
 .wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   justify-content: center;
   text-align: center;
   padding: 20px;
@@ -154,8 +155,25 @@ body {
   padding: 30px;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
+  transition: 0.3s ease;
   color: var(--accent);
+  position: relative;
+  z-index: 1;
+}
+
+.feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: radial-gradient(circle at center, rgba(67, 139, 255, 0.4), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.feature-card:hover::before {
+  opacity: 1;
 }
 
 .feature-card:hover {
