@@ -152,6 +152,7 @@ body {
 .btn.primary {
     background-color: var(--primary);
     color: #fff;
+    text-decoration: none;
 }
 
 .btn.secondary {
@@ -162,11 +163,13 @@ body {
 
 /* Features section */
 .features {
-    padding: 80px 20px;
+    padding: 20px 20px;
+    margin: -150px auto 60px auto;
+    /* <-- add bottom margin */
     max-width: 1100px;
-    margin: 0 auto;
     text-align: center;
 }
+
 
 .section-title {
     font-size: 36px;
@@ -442,12 +445,40 @@ body {
 .glow-wrapper input::placeholder {
     color: #777;
 }
+
 .glow {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 10px;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 0.3s ease, box-shadow 0.3s ease;
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+.socials {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 60px;
+    margin-bottom: 100px;
+}
+
+.social-icon img {
+    width: 36px;
+    height: 36px;
+    transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
+}
+
+.social-icon:hover img {
+    transform: scale(1.1);
+    box-shadow: 0 0 12px rgba(67, 139, 255, 0.5);
+    filter: drop-shadow(0 0 4px rgba(67, 139, 255, 0.4));
+}
+
+.follow-text {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #aaa;
+    letter-spacing: 0.5px;
 }
