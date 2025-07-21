@@ -3,7 +3,15 @@
     --text-color: #f4f4f4;
     --primary: #438bff;
     --accent: #ffffff;
+    --purple: #a855f7;
+    /* subtle neon purple */
 }
+
+
+html {
+    scroll-behavior: smooth;
+}
+
 
 body {
     margin: 0;
@@ -273,4 +281,173 @@ body {
     z-index: 0;
     pointer-events: none;
     background: transparent;
+}
+
+/* CTA Glow Pulse */
+.btn.primary {
+    background-color: var(--primary);
+    color: #fff;
+    animation: pulse-glow 2.5s infinite ease-in-out;
+    box-shadow: 0 0 0 rgba(67, 139, 255, 0.7);
+}
+
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 0px rgba(67, 139, 255, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 15px rgba(67, 139, 255, 0.8);
+    }
+
+    100% {
+        box-shadow: 0 0 0px rgba(67, 139, 255, 0.4);
+    }
+}
+
+.signup-section {
+    display: flex;
+    justify-content: center;
+    padding: 80px 20px;
+    background: var(--bg-dark);
+}
+
+.signup-box {
+    width: 100%;
+    max-width: 400px;
+    background: black;
+    color: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+}
+
+.signup-box h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.signup-subtitle {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.name-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #ddd;
+}
+
+.input-group input {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background-color: #1a1a1a;
+    color: white;
+}
+
+.input-group input::placeholder {
+    color: #777;
+}
+
+.btn.full {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn.secondary.full {
+    background-color: #111;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn.secondary.full:hover {
+    background-color: #222;
+}
+
+.icon {
+    height: 16px;
+    width: 16px;
+}
+
+.divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #333, transparent);
+    margin: 30px 0;
+}
+
+/* Hover glow wrapper for inputs and buttons */
+.glow-wrapper {
+    position: relative;
+    display: block;
+    border-radius: 10px;
+    overflow: visible;
+    background-color: #1a1a1a;
+}
+
+
+.glow-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 14px 4px rgba(67, 139, 255, 0.3),
+        0 0 28px 8px rgba(168, 85, 247, 0.2);
+}
+
+.glow-wrapper input:focus+.glow,
+.glow-wrapper button:focus+.glow,
+.glow-wrapper:hover .glow {
+    opacity: 1;
+    box-shadow: 0 0 18px 6px rgba(67, 139, 255, 0.25),
+        0 0 32px 10px rgba(168, 85, 247, 0.15);
+}
+
+/* Input/button styles inside glow box */
+.glow-wrapper input,
+.glow-wrapper button {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    width: 100%;
+    height: 40px;
+    padding: 10px 14px;
+    border: none;
+    color: white;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+}
+
+.glow-wrapper input::placeholder {
+    color: #777;
+}
+.glow {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
 }
