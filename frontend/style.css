@@ -10,6 +10,11 @@
 
 html {
     scroll-behavior: smooth;
+    /* Hide scrollbar but allow scrolling */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE 10+ */
 }
 
 
@@ -19,6 +24,12 @@ body {
     font-family: 'Poppins', sans-serif;
     color: var(--text-color);
     overflow-x: hidden;
+}
+
+body::-webkit-scrollbar,
+html::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
 }
 
 .wrapper {

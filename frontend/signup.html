@@ -21,7 +21,6 @@
                 <a href="index.html#apps">Apps</a>
                 <a href="index.html#pricing">Pricing</a>
                 <a href="index.html#updates">Updates</a>
-                <a href="https://x.com" target="_blank">Twitter</a>
                 <a href="signup.html">Signup</a>
             </nav>
         </div>
@@ -30,8 +29,8 @@
     <section class="signup-section">
         <div class="signup-box">
             <h2>Welcome to Traffy</h2>
-            <p class="signup-subtitle">Login to Traffy to start your journey to a easier every day!</p>
-
+            <p class="signup-subtitle">Sign up or log in to start your journey to an easier every day!</p>
+            <div id="user-status" style="margin-bottom: 16px;"></div>
             <form id="signupForm">
                 <div class="name-row">
                     <div class="input-group">
@@ -49,48 +48,131 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="input-group">
                     <label for="email">Email Address</label>
                     <div class="glow-wrapper">
-                        <input type="email" id="email" placeholder="projectmayhem@fc.com" />
+                        <input type="email" id="email" placeholder="projectmayhem@fc.com" required />
                         <div class="glow"></div>
                     </div>
                 </div>
-
                 <div class="input-group">
                     <label for="password">Password</label>
                     <div class="glow-wrapper">
-                        <input type="password" id="password" placeholder="••••••••" />
+                        <input type="password" id="password" placeholder="••••••••" required />
                         <div class="glow"></div>
                     </div>
                 </div>
-
-                <div class="input-group">
-                    <label for="twitterpass">Your twitter password</label>
-                    <div class="glow-wrapper">
-                        <input type="password" id="twitterpass" placeholder="••••••••" />
-                        <div class="glow"></div>
-                    </div>
-                </div>
-
                 <div class="glow-wrapper">
                     <button type="submit">Sign up →</button>
                     <div class="glow"></div>
                 </div>
-
+                <div style="margin-top: 18px; text-align: center;">
+                    <span>Already have an account? <a href="#" id="showLogin">Log in</a></span>
+                </div>
                 <div class="divider"></div>
                 <div style="display: flex; justify-content: center; margin-top: 10px;">
                     <div id="google-signin-btn" style="width: 100%; max-width: 360px;"></div>
                 </div>
-
-
             </form>
+        </div>
+        <!-- Login Modal -->
+        <div id="loginModal"
+            style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:2000; align-items:center; justify-content:center;">
+            <div
+                style="background:#181828; color:#fff; border-radius:16px; padding:32px; min-width:320px; max-width:90vw; box-shadow:0 8px 32px #000; position:relative;">
+                <button id="closeLogin"
+                    style="position:absolute; top:12px; right:16px; background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">&times;</button>
+                <h3 style="margin-top:0;">Log in to Traffy</h3>
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label for="loginEmail">Email</label>
+                        <div class="glow-wrapper">
+                            <input type="email" id="loginEmail" required />
+                            <div class="glow"></div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="loginPassword">Password</label>
+                        <div class="glow-wrapper">
+                            <input type="password" id="loginPassword" required />
+                            <div class="glow"></div>
+                        </div>
+                    </div>
+                    <div class="glow-wrapper">
+                        <button type="submit">Log in</button>
+                        <div class="glow"></div>
+                    </div>
+                    <div id="loginError" style="color:#f55; margin-top:10px;"></div>
+                </form>
+            </div>
         </div>
     </section>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="js/script.js"></script>
+    <script>
+        // --- Modern signup/login logic ---
+        async function checkUserStatus() {
+            const res = await fetch('/me');
+            const data = await res.json();
+            const status = document.getElementById('user-status');
+            if (data.logged_in) {
+                status.innerHTML = `✅ Logged in as <b>${data.email}</b>`;
+            } else {
+                status.innerHTML = '';
+            }
+        }
+        checkUserStatus();
+
+        // Signup form
+        document.getElementById('signupForm').onsubmit = async function (e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            // You can collect first/last name if you want to store them
+            const res = await fetch('/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            if (res.ok) {
+                alert('Signup successful! You can now log in.');
+            } else {
+                const data = await res.json();
+                alert('Signup failed: ' + (data.detail || 'Unknown error'));
+            }
+        };
+
+        // Login modal logic
+        document.getElementById('showLogin').onclick = function (e) {
+            e.preventDefault();
+            document.getElementById('loginModal').style.display = 'flex';
+        };
+        document.getElementById('closeLogin').onclick = function () {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('loginError').innerText = '';
+        };
+
+        // Login form
+        document.getElementById('loginForm').onsubmit = async function (e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const res = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            if (res.ok) {
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('loginError').innerText = '';
+                await checkUserStatus();
+            } else {
+                const data = await res.json();
+                document.getElementById('loginError').innerText = data.detail || 'Login failed.';
+            }
+        };
+    </script>
 
 </body>
 
