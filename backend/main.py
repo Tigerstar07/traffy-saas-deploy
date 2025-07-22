@@ -13,6 +13,7 @@ import hashlib
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from fastapi.staticfiles import StaticFiles
+from fastapi import Cookie, Response
 
 # ✅ First, define the app
 app = FastAPI()
@@ -153,3 +154,9 @@ async def google_login(request: Request):
 
     except Exception as e:
         return JSONResponse(status_code=400, content={"success": False, "detail": str(e)})
+
+# ✅ Logout route (clear session cookie)
+@app.post("/logout")
+def logout(response: Response):
+    response.delete_cookie(key="session")  # Delete the session cookie
+    return {"message": "Logged out successfully"}

@@ -23,6 +23,9 @@
         <a href="pricing.html">Pricing</a>
         <a href="#updates">Updates</a>
         <a href="signup.html">Signup</a>
+        <span id="nav-user-status" style="margin-left:18px; color:#7fd0ff; font-weight:600; font-size:13px;"></span>
+        <a href="#" id="logoutBtn"
+          style="display:none; margin-left:10px; color:#f55; font-size:13px; font-weight:600;">Log out</a>
       </nav>
     </div>
   </header>
@@ -90,6 +93,32 @@
 
 
   <script src="js/script.js"></script>
+  <script>
+    // Persistent login indicator and logout for nav bar
+    async function checkUserStatus() {
+      try {
+        const res = await fetch('/me');
+        const data = await res.json();
+        const navStatus = document.getElementById('nav-user-status');
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (data.logged_in) {
+          let username = data.email.split('@')[0];
+          if (navStatus) navStatus.innerHTML = `<span style='font-size:13px;'>👤 ${username}</span>`;
+          if (logoutBtn) logoutBtn.style.display = '';
+        } else {
+          if (navStatus) navStatus.innerHTML = '';
+          if (logoutBtn) logoutBtn.style.display = 'none';
+        }
+      } catch (e) { }
+    }
+    checkUserStatus();
+
+    document.getElementById('logoutBtn').onclick = async function (e) {
+      e.preventDefault();
+      await fetch('/logout', { method: 'POST' });
+      window.location.reload();
+    };
+  </script>
 </body>
 
 </html>

@@ -11,7 +11,7 @@
 
 <body>
     <canvas id="stars-canvas"></canvas>
-    <header class="top-nav">
+    <header class="top-nav" style="position:fixed; top:0; left:0; width:100vw; z-index:1000;">
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="index.html">Traffy</a>
@@ -22,6 +22,10 @@
                 <a href="index.html#pricing">Pricing</a>
                 <a href="index.html#updates">Updates</a>
                 <a href="signup.html">Signup</a>
+                <span id="nav-user-status"
+                    style="margin-left:18px; color:#7fd0ff; font-weight:600; font-size:13px;"></span>
+                <a href="#" id="logoutBtn"
+                    style="display:none; margin-left:10px; color:#f55; font-size:13px; font-weight:600;">Log out</a>
             </nav>
         </div>
     </header>
@@ -110,70 +114,6 @@
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="js/script.js"></script>
-    <script>
-        // --- Modern signup/login logic ---
-        async function checkUserStatus() {
-            const res = await fetch('/me');
-            const data = await res.json();
-            const status = document.getElementById('user-status');
-            if (data.logged_in) {
-                status.innerHTML = `✅ Logged in as <b>${data.email}</b>`;
-            } else {
-                status.innerHTML = '';
-            }
-        }
-        checkUserStatus();
-
-        // Signup form
-        document.getElementById('signupForm').onsubmit = async function (e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            // You can collect first/last name if you want to store them
-            const res = await fetch('/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            if (res.ok) {
-                alert('Signup successful! You can now log in.');
-            } else {
-                const data = await res.json();
-                alert('Signup failed: ' + (data.detail || 'Unknown error'));
-            }
-        };
-
-        // Login modal logic
-        document.getElementById('showLogin').onclick = function (e) {
-            e.preventDefault();
-            document.getElementById('loginModal').style.display = 'flex';
-        };
-        document.getElementById('closeLogin').onclick = function () {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('loginError').innerText = '';
-        };
-
-        // Login form
-        document.getElementById('loginForm').onsubmit = async function (e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const res = await fetch('/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            if (res.ok) {
-                document.getElementById('loginModal').style.display = 'none';
-                document.getElementById('loginError').innerText = '';
-                await checkUserStatus();
-            } else {
-                const data = await res.json();
-                document.getElementById('loginError').innerText = data.detail || 'Login failed.';
-            }
-        };
-    </script>
-
 </body>
 
 </html>

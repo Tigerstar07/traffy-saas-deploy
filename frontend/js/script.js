@@ -259,3 +259,80 @@ window.onload = function () {
         );
     }
 }
+
+
+// --- Modern signup/login logic ---
+async function checkUserStatus() {
+    const res = await fetch('/me');
+    const data = await res.json();
+    const status = document.getElementById('user-status');
+    const navStatus = document.getElementById('nav-user-status');
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (data.logged_in) {
+        let username = data.email.split('@')[0];
+        if (status) status.innerHTML = `✅ Logged in as <b>${username}</b>`;
+        if (navStatus) navStatus.innerHTML = `<span style='font-size:13px;'>👤 ${username}</span>`;
+        if (logoutBtn) logoutBtn.style.display = '';  // Show logout button
+    } else {
+        if (status) status.innerHTML = '';
+        if (navStatus) navStatus.innerHTML = '';
+        if (logoutBtn) logoutBtn.style.display = 'none';  // Hide logout button
+    }
+}
+checkUserStatus();
+
+// Logout button click event
+document.getElementById('logoutBtn').onclick = async function (e) {
+    e.preventDefault();
+    await fetch('/logout', { method: 'POST' });  // Call the logout endpoint
+    window.location.reload();  // Reload the page after logout to update the UI
+};
+
+// Signup form
+document.getElementById('signupForm').onsubmit = async function (e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    // You can collect first/last name if you want to store them
+    const res = await fetch('/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    });
+    if (res.ok) {
+        alert('Signup successful! You can now log in.');
+    } else {
+        const data = await res.json();
+        alert('Signup failed: ' + (data.detail || 'Unknown error'));
+    }
+};
+
+// Login modal logic
+document.getElementById('showLogin').onclick = function (e) {
+    e.preventDefault();
+    document.getElementById('loginModal').style.display = 'flex';
+};
+document.getElementById('closeLogin').onclick = function () {
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('loginError').innerText = '';
+};
+
+// Login form
+document.getElementById('loginForm').onsubmit = async function (e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    });
+    if (res.ok) {
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('loginError').innerText = '';
+        await checkUserStatus();
+    } else {
+        const data = await res.json();
+        document.getElementById('loginError').innerText = data.detail || 'Login failed.';
+    }
+};
