@@ -19,6 +19,7 @@ app = FastAPI()
 app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 
 
+
 # ✅ Load environment variables
 load_dotenv()
 
