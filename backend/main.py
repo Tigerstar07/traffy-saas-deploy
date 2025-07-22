@@ -16,7 +16,8 @@ from fastapi.staticfiles import StaticFiles
 app = FastAPI()
 
 # ✅ Then mount the static frontend
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+
 
 # ✅ Load environment variables
 load_dotenv()
