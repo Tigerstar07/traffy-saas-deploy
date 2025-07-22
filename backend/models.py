@@ -6,7 +6,7 @@ import uuid
 class User(SQLModel, table=True):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
     email: str
-    hashed_password: str
+    hashed_password: Optional[str] = None
     plan: Optional[str] = "free"
     created_at: datetime = Field(default_factory=datetime.utcnow)
 

@@ -178,10 +178,82 @@ if (canvas) {
 }
 
 // --- Signup form demo submission ---
+// --- Real signup submission ---
 const signupForm = document.getElementById("signupForm");
 if (signupForm) {
-    signupForm.addEventListener("submit", function (e) {
+    signupForm.addEventListener("submit", async function (e) {
         e.preventDefault();
-        alert("Signup form submitted! (Demo only)");
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("✅ Signup successful! ID: " + result.id);
+                window.location.href = "dashboard.html"; // change path if needed
+            } else {
+                alert("❌ Error: " + result.detail);
+            }
+        } catch (err) {
+            console.error("Signup error", err);
+            alert("⚠️ Could not reach server.");
+        }
     });
 }
+
+
+
+/* global google */
+function handleCredentialResponse(response) {
+    const token = response.credential;
+
+    fetch('http://127.0.0.1:8000/auth/google', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("Welcome, " + data.email + "!");
+                window.location.href = "/dashboard.html"; // or your actual dashboard path
+            } else {
+                alert("Login failed: " + data.detail);
+            }
+        })
+        .catch(error => {
+            console.error("Login error", error);
+            alert("Something went wrong!");
+        });
+}
+
+window.onload = function () {
+    google.accounts.id.initialize({
+        client_id: "780355441104-q8518j7nhs6buliivjitgn7jk67t9jalc.apps.googleusercontent.com",
+        callback: handleCredentialResponse
+    });
+
+
+    const googleBtn = document.getElementById("google-signin-btn");
+    if (googleBtn) {
+        google.accounts.id.renderButton(
+            googleBtn,
+            { theme: "outline", size: "large" }
+        );
+    }
+
+
+    google.accounts.id.prompt();
+};
