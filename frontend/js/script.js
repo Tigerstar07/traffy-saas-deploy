@@ -245,15 +245,17 @@ window.onload = function () {
         callback: handleCredentialResponse
     });
 
-
     const googleBtn = document.getElementById("google-signin-btn");
     if (googleBtn) {
         google.accounts.id.renderButton(
             googleBtn,
-            { theme: "outline", size: "large" }
+            {
+                theme: "filled_black",
+                size: "large",
+                shape: "pill",
+                logo_alignment: "left",
+                width: 360,
+            }
         );
     }
-
-
-    google.accounts.id.prompt();
-};
+}

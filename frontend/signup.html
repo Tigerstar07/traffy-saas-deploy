@@ -7,7 +7,6 @@
     <title>Sign Up - Traffy</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/svg+xml" href="images/Traffy1 icon.png" />
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
@@ -81,17 +80,18 @@
                 </div>
 
                 <div class="divider"></div>
-
-                <div class="glow-wrapper">
-                    <!-- Google sign-in rendered here -->
-                    <div id="google-signin-btn"></div>
-                    <div class="glow"></div>
+                <div style="display: flex; justify-content: center; margin-top: 10px;">
+                    <div id="google-signin-btn" style="width: 100%; max-width: 360px;"></div>
                 </div>
+
+
             </form>
         </div>
     </section>
 
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="js/script.js"></script>
+
 </body>
 
 </html>
