@@ -10,22 +10,30 @@ from .models import User, SignupRequest
 from dotenv import load_dotenv
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
+from fastapi.staticfiles import StaticFiles
 
+# ✅ First, define the app
+app = FastAPI()
+
+# ✅ Then mount the static frontend
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+
+# ✅ Load environment variables
 load_dotenv()
 
-app = FastAPI()
+# ✅ Password hasher
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# CORS (if frontend is on another port or origin)
+# ✅ CORS (adjust in production!)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change to specific origin in production
+    allow_origins=["*"],  # Replace with your frontend URL in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# OAuth for Google redirect flow
+# ✅ OAuth for Google login
 oauth = OAuth()
 oauth.register(
     name='google',
@@ -35,11 +43,12 @@ oauth.register(
     client_kwargs={'scope': 'openid email profile'},
 )
 
+# ✅ DB setup
 @app.on_event("startup")
 def startup():
     SQLModel.metadata.create_all(engine)
 
-# ✅ Email/Password Signup
+# ✅ Email/password signup route
 @app.post("/signup")
 def signup(data: SignupRequest):
     with Session(engine) as session:
@@ -54,7 +63,7 @@ def signup(data: SignupRequest):
         session.refresh(user)
         return {"id": user.id, "message": "Signup successful"}
 
-# ✅ Google OAuth2 Redirect Login
+# ✅ Google OAuth2 (redirect-style) login
 @app.get("/login/google")
 async def login_via_google(request: Request):
     redirect_uri = request.url_for("auth_callback")
@@ -78,7 +87,7 @@ async def auth_callback(request: Request):
 
     return RedirectResponse(url="/frontend/dashboard.html")
 
-# ✅ Google One-Tap / JS Token Login (via `fetch`)
+# ✅ Google One-Tap or JS-based token login
 @app.post("/auth/google")
 async def google_login(request: Request):
     data = await request.json()
@@ -105,4 +114,3 @@ async def google_login(request: Request):
 
     except Exception as e:
         return JSONResponse(status_code=400, content={"success": False, "detail": str(e)})
-    
