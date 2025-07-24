@@ -3,21 +3,242 @@
 
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Traffy Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/svg+xml" href="images/Traffy1 icon.png" />
+    <style>
+        .dashboard-container {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 80px auto 0;
+        }
+
+        .dashboard-section {
+            background: rgba(20, 30, 48, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .dashboard-section h2 {
+            color: #7fd0ff;
+            margin-top: 0;
+            border-bottom: 1px solid rgba(127, 208, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .connect-button {
+            background: #4285F4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .connect-button:hover {
+            background: #3367D6;
+        }
+
+        .template-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .template-item {
+            padding: 15px;
+            background: rgba(30, 40, 58, 0.7);
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .template-actions button {
+            background: transparent;
+            border: none;
+            color: #7fd0ff;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .add-template-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .dashboard-tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: rgba(30, 40, 58, 0.7);
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            color: #ddd;
+        }
+
+        .tab.active {
+            background: rgba(20, 30, 48, 0.7);
+            color: #7fd0ff;
+            border-bottom: 2px solid #7fd0ff;
+        }
+
+        .analytics-placeholder {
+            text-align: center;
+            padding: 40px;
+            color: #7fd0ff;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Welcome to the Traffy Dashboard</h1>
-    <p>You are logged in.</p>
+    <canvas id="stars-canvas"></canvas>
 
-    <button onclick="logout()">Logout</button>
+    <header class="top-nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">Traffy</a>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html#features">Features</a>
+                <a href="index.html#apps">Apps</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="index.html#updates">Updates</a>
+                <a href="dashboard.html" class="active">Dashboard</a>
+                <span id="nav-user-status"
+                    style="margin-left:18px; color:#7fd0ff; font-weight:600; font-size:13px;"></span>
+                <a href="#" id="logoutBtn" style="margin-left:10px; color:#f55; font-size:13px; font-weight:600;">Log
+                    out</a>
+            </nav>
+        </div>
+    </header>
 
+    <div class="dashboard-container">
+        <div class="dashboard-tabs">
+            <div class="tab active" data-tab="integrations">Integrations</div>
+            <div class="tab" data-tab="templates">Auto-reply Templates</div>
+            <div class="tab" data-tab="analytics">Analytics</div>
+            <div class="tab" data-tab="settings">Settings</div>
+        </div>
+
+        <div class="dashboard-section" id="integrations-section">
+            <h2>Connect Your Services</h2>
+            <p>Connect your email and other services to automate your workflows.</p>
+            <button class="connect-button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4Z"
+                        fill="white" />
+                    <path d="M20 4H4C2.9 4 2 4.9 2 6L12 13L22 6C22 4.9 21.1 4 20 4Z" fill="white" />
+                </svg>
+                Connect Gmail
+            </button>
+        </div>
+
+        <div class="dashboard-section" id="templates-section" style="display: none;">
+            <h2>Auto-reply Templates</h2>
+            <button class="add-template-btn">+ Add New Template</button>
+            <ul class="template-list">
+                <li class="template-item">
+                    <div class="template-info">
+                        <strong>Out of Office</strong>
+                        <p>I'm currently away and will respond when I return...</p>
+                    </div>
+                    <div class="template-actions">
+                        <button>Edit</button>
+                        <button>Delete</button>
+                    </div>
+                </li>
+                <li class="template-item">
+                    <div class="template-info">
+                        <strong>Thank You Response</strong>
+                        <p>Thank you for your email. I appreciate your...</p>
+                    </div>
+                    <div class="template-actions">
+                        <button>Edit</button>
+                        <button>Delete</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="dashboard-section" id="analytics-section" style="display: none;">
+            <h2>Analytics</h2>
+            <div class="analytics-placeholder">
+                <p>Analytics dashboard coming soon!</p>
+                <p>Track your email performance and automation statistics here.</p>
+            </div>
+        </div>
+
+        <div class="dashboard-section" id="settings-section" style="display: none;">
+            <h2>Settings</h2>
+            <p>Account and notification preferences will appear here in a future update.</p>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
     <script>
-        function logout() {
-            // You can also clear localStorage or token cookies if you add that
-            alert("Logged out!");
-            window.location.href = "signup.html";
+        // Check if user is logged in
+        async function checkUserStatus() {
+            try {
+                const res = await fetch('/me');
+                const data = await res.json();
+                const navStatus = document.getElementById('nav-user-status');
+
+                if (data.logged_in) {
+                    let username = data.email.split('@')[0];
+                    if (navStatus) navStatus.innerHTML = `<span style='font-size:13px;'>👤 ${username}</span>`;
+                } else {
+                    // Redirect to login if not logged in
+                    window.location.href = 'index.html';
+                }
+            } catch (e) {
+                // Redirect to login if error
+                window.location.href = 'index.html';
+            }
         }
+        checkUserStatus();
+
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Update active tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Hide all sections
+                document.querySelectorAll('.dashboard-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+
+                // Show selected section
+                const tabName = tab.getAttribute('data-tab');
+                document.getElementById(`${tabName}-section`).style.display = 'block';
+            });
+        });
+
+        // Logout functionality
+        document.getElementById('logoutBtn').onclick = async function (e) {
+            e.preventDefault();
+            await fetch('/logout', { method: 'POST' });
+            window.location.href = 'index.html';
+        };
     </script>
 </body>
 

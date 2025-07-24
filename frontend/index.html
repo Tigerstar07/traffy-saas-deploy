@@ -23,6 +23,8 @@
         <a href="pricing.html">Pricing</a>
         <a href="#updates">Updates</a>
         <a href="signup.html">Signup</a>
+        <a href="dashboard.html" id="dashboardLink"
+          style="display:none; background-color: #7fd0ff; color: #000; padding: 5px 10px; border-radius: 4px; font-weight: bold;">Dashboard</a>
         <span id="nav-user-status" style="margin-left:18px; color:#7fd0ff; font-weight:600; font-size:13px;"></span>
         <a href="#" id="logoutBtn"
           style="display:none; margin-left:10px; color:#f55; font-size:13px; font-weight:600;">Log out</a>
@@ -42,6 +44,8 @@
       <div class="buttons">
         <a href="signup.html" class="btn primary">Join now</a>
         <button class="btn secondary">Signup</button>
+        <a href="dashboard.html" id="dashboardBtn" class="btn primary"
+          style="display:none; background-color:#7fd0ff; margin-left:10px;">Go to Dashboard</a>
       </div>
     </div>
   </div>
@@ -101,13 +105,19 @@
         const data = await res.json();
         const navStatus = document.getElementById('nav-user-status');
         const logoutBtn = document.getElementById('logoutBtn');
+        const dashboardLink = document.getElementById('dashboardLink');
+        const dashboardBtn = document.getElementById('dashboardBtn');
         if (data.logged_in) {
           let username = data.email.split('@')[0];
           if (navStatus) navStatus.innerHTML = `<span style='font-size:13px;'>👤 ${username}</span>`;
           if (logoutBtn) logoutBtn.style.display = '';
+          if (dashboardLink) dashboardLink.style.display = '';
+          if (dashboardBtn) dashboardBtn.style.display = '';
         } else {
           if (navStatus) navStatus.innerHTML = '';
           if (logoutBtn) logoutBtn.style.display = 'none';
+          if (dashboardLink) dashboardLink.style.display = 'none';
+          if (dashboardBtn) dashboardBtn.style.display = 'none';
         }
       } catch (e) { }
     }
