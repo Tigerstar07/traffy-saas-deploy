@@ -184,11 +184,11 @@ if (signupForm) {
     signupForm.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const email = document.getElementById("email").value;
+        const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/signup", {
+            const response = await fetch("/signup", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -199,10 +199,10 @@ if (signupForm) {
             const result = await response.json();
 
             if (response.ok) {
-                alert("✅ Signup successful! ID: " + result.id);
+                alert("✅ Signup successful! ID: " + (result.id || ''));
                 window.location.href = "dashboard.html"; // change path if needed
             } else {
-                alert("❌ Error: " + result.detail);
+                alert("❌ Error: " + (result.detail || 'Signup failed'));
             }
         } catch (err) {
             console.error("Signup error", err);
@@ -211,24 +211,142 @@ if (signupForm) {
     });
 }
 
+// --- Login form ---
+document.getElementById('loginForm').onsubmit = async function (e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
 
+    const res = await fetch('http://127.0.0.1:8000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    });
 
-/* global google */
+    if (res.ok) {
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('loginError').innerText = '';
+        await checkUserStatus();
+    } else {
+        const data = await res.json();
+        document.getElementById('loginError').innerText = data.detail || 'Login failed.';
+    }
+};
+
+// Login logic
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+    loginForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        try {
+            const res = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            if (!res.ok) throw new Error('Login failed');
+            // Optionally hide modal here if using one
+            await checkUserStatus();
+        } catch (err) {
+            alert('Login error: ' + err.message);
+        }
+    });
+}
+
+// --- Logout button ---
+document.getElementById('logoutBtn').onclick = async function (e) {
+    e.preventDefault();
+    await fetch('http://127.0.0.1:8000/logout', { method: 'POST' });
+    window.location.reload();
+};
+
+// Logout logic
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.onclick = async function (e) {
+        e.preventDefault();
+        await fetch('/logout', { method: 'POST' });
+        window.location.reload();
+    };
+}
+
+// --- Check if user is logged in ---
+async function checkUserStatus() {
+    try {
+        const res = await fetch('/me');
+        if (!res.ok) throw new Error('Not logged in');
+        const data = await res.json();
+
+        const navStatus = document.getElementById('nav-user-status');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        if (data.logged_in) {
+            const username = data.email.split('@')[0];
+            if (navStatus) navStatus.innerHTML = `<span style='font-size:13px;'>👤 ${username}</span>`;
+            if (logoutBtn) logoutBtn.style.display = '';
+        } else {
+            if (navStatus) navStatus.innerHTML = '';
+            if (logoutBtn) logoutBtn.style.display = 'none';
+        }
+    } catch {
+        const navStatus = document.getElementById('nav-user-status');
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (navStatus) navStatus.innerHTML = '';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+    }
+}
+checkUserStatus();
+// Session status and navbar update
+async function checkUserStatus() {
+    try {
+        const res = await fetch('/me');
+        if (!res.ok) throw new Error('Not logged in');
+        const data = await res.json();
+        const navStatus = document.getElementById('nav-user-status');
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (data.logged_in) {
+            let username = data.email.split('@')[0];
+            if (navStatus) navStatus.innerHTML = `<span style='font-size:13px;'>👤 ${username}</span>`;
+            if (logoutBtn) logoutBtn.style.display = '';
+        } else {
+            if (navStatus) navStatus.innerHTML = '';
+            if (logoutBtn) logoutBtn.style.display = 'none';
+        }
+    } catch {
+        // Not logged in
+        const navStatus = document.getElementById('nav-user-status');
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (navStatus) navStatus.innerHTML = '';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+    }
+}
+
+// --- Login modal open/close ---
+document.getElementById('showLogin').onclick = function (e) {
+    e.preventDefault();
+    document.getElementById('loginModal').style.display = 'flex';
+};
+document.getElementById('closeLogin').onclick = function () {
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('loginError').innerText = '';
+};
+
+// --- Google OAuth login ---
 function handleCredentialResponse(response) {
     const token = response.credential;
 
-    fetch('http://127.0.0.1:8000/auth/google', {
+    fetch('/auth/google', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token })
     })
         .then(res => res.json())
         .then(data => {
             if (data.success) {
                 alert("Welcome, " + data.email + "!");
-                window.location.href = "/dashboard.html"; // or your actual dashboard path
+                window.location.href = "/dashboard.html";
             } else {
                 alert("Login failed: " + data.detail);
             }
@@ -247,92 +365,13 @@ window.onload = function () {
 
     const googleBtn = document.getElementById("google-signin-btn");
     if (googleBtn) {
-        google.accounts.id.renderButton(
-            googleBtn,
-            {
-                theme: "filled_black",
-                size: "large",
-                shape: "pill",
-                logo_alignment: "left",
-                width: 360,
-            }
-        );
-    }
-}
-
-
-// --- Modern signup/login logic ---
-async function checkUserStatus() {
-    const res = await fetch('/me');
-    const data = await res.json();
-    const status = document.getElementById('user-status');
-    const navStatus = document.getElementById('nav-user-status');
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (data.logged_in) {
-        let username = data.email.split('@')[0];
-        if (status) status.innerHTML = `✅ Logged in as <b>${username}</b>`;
-        if (navStatus) navStatus.innerHTML = `<span style='font-size:13px;'>👤 ${username}</span>`;
-        if (logoutBtn) logoutBtn.style.display = '';  // Show logout button
-    } else {
-        if (status) status.innerHTML = '';
-        if (navStatus) navStatus.innerHTML = '';
-        if (logoutBtn) logoutBtn.style.display = 'none';  // Hide logout button
-    }
-}
-checkUserStatus();
-
-// Logout button click event
-document.getElementById('logoutBtn').onclick = async function (e) {
-    e.preventDefault();
-    await fetch('/logout', { method: 'POST' });  // Call the logout endpoint
-    window.location.reload();  // Reload the page after logout to update the UI
-};
-
-// Signup form
-document.getElementById('signupForm').onsubmit = async function (e) {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    // You can collect first/last name if you want to store them
-    const res = await fetch('/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-    });
-    if (res.ok) {
-        alert('Signup successful! You can now log in.');
-    } else {
-        const data = await res.json();
-        alert('Signup failed: ' + (data.detail || 'Unknown error'));
+        google.accounts.id.renderButton(googleBtn, {
+            theme: "filled_black",
+            size: "large",
+            shape: "pill",
+            logo_alignment: "left",
+            width: 360
+        });
     }
 };
 
-// Login modal logic
-document.getElementById('showLogin').onclick = function (e) {
-    e.preventDefault();
-    document.getElementById('loginModal').style.display = 'flex';
-};
-document.getElementById('closeLogin').onclick = function () {
-    document.getElementById('loginModal').style.display = 'none';
-    document.getElementById('loginError').innerText = '';
-};
-
-// Login form
-document.getElementById('loginForm').onsubmit = async function (e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    const res = await fetch('/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-    });
-    if (res.ok) {
-        document.getElementById('loginModal').style.display = 'none';
-        document.getElementById('loginError').innerText = '';
-        await checkUserStatus();
-    } else {
-        const data = await res.json();
-        document.getElementById('loginError').innerText = data.detail || 'Login failed.';
-    }
-};

@@ -1,162 +1,211 @@
-import os
-from fastapi import FastAPI, HTTPException, Request, Response, Depends, Cookie
-from fastapi.responses import RedirectResponse, JSONResponse
-from sqlmodel import SQLModel, Session, select
-from starlette.middleware.cors import CORSMiddleware
-from authlib.integrations.starlette_client import OAuth
+# --- Authentication Approach ---
+# This backend uses server-side session authentication.
+# - Sessions are stored on the server and a session cookie is sent to the client.
+# - This allows real-time revocation (logout is instant).
+# - For small deployments or where instant logout is needed, sessions are fine.
+# - For large-scale or distributed deployments (e.g., multiple servers, mobile clients), consider switching to JWT authentication.
+#   - JWTs are stateless, scale well, but revocation is more complex.
+#   - See: https://blog.logto.io/session-vs-jwt-authentication/
+
+from fastapi import FastAPI, Request, Response, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from passlib.context import CryptContext
-from .database import engine
-from .models import User, SignupRequest
-from dotenv import load_dotenv
+import jwt
+from datetime import datetime, timedelta
+import os
 import secrets
-import hashlib
-from google.oauth2 import id_token
-from google.auth.transport import requests as google_requests
-from fastapi.staticfiles import StaticFiles
-from fastapi import Cookie, Response
+import uvicorn
 
-# ✅ First, define the app
-app = FastAPI()
+# Import database (create this file next)
+from database import get_db, SessionLocal
 
-# ✅ Then mount the static frontend
-app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+app = FastAPI(title="Traffy API")
 
-
-
-# ✅ Load environment variables
-load_dotenv()
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# --- Simple session management (signed cookie, not for production) ---
-SESSION_SECRET = os.getenv("SESSION_SECRET") or secrets.token_hex(32)
-def sign_session(email: str) -> str:
-    # Simple HMAC-like signature
-    sig = hashlib.sha256((email + SESSION_SECRET).encode()).hexdigest()
-    return f"{email}:{sig}"
-
-def verify_session(session_cookie: str) -> str | None:
-    if not session_cookie or ':' not in session_cookie:
-        return None
-    email, sig = session_cookie.split(':', 1)
-    expected = hashlib.sha256((email + SESSION_SECRET).encode()).hexdigest()
-    if secrets.compare_digest(sig, expected):
-        return email
-    return None
-
-# ✅ CORS (adjust in production!)
+# CORS middleware to allow frontend to connect
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace with your frontend URL in production
+    allow_origins=["*"],  # In production, replace with specific origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ✅ OAuth for Google login
-oauth = OAuth()
-oauth.register(
-    name='google',
-    client_id=os.getenv("GOOGLE_CLIENT_ID"),
-    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-    client_kwargs={'scope': 'openid email profile'},
-)
+# Security
+SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-# ✅ DB setup
-@app.on_event("startup")
-def startup():
-    SQLModel.metadata.create_all(engine)
+# Password hashing
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+# Models
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
-# ✅ Email/password signup route
-@app.post("/signup")
-def signup(data: SignupRequest):
-    with Session(engine) as session:
-        existing = session.exec(select(User).where(User.email == data.email)).first()
-        if existing:
-            raise HTTPException(status_code=400, detail="Email already registered")
-        hashed_pw = pwd_context.hash(data.password)
-        user = User(email=data.email, hashed_password=hashed_pw)
-        session.add(user)
-        session.commit()
-        session.refresh(user)
-        return {"id": user.id, "message": "Signup successful"}
+class TokenData(BaseModel):
+    email: Optional[str] = None
 
-# ✅ Email/password login route
-@app.post("/login")
-def login(data: SignupRequest, response: Response):
-    with Session(engine) as session:
-        user = session.exec(select(User).where(User.email == data.email)).first()
-        if not user or not pwd_context.verify(data.password, user.hashed_password):
-            raise HTTPException(status_code=401, detail="Invalid credentials")
-        # Set session cookie
-        session_token = sign_session(user.email)
-        response.set_cookie(key="session", value=session_token, httponly=True, samesite="lax")
-        return {"success": True, "email": user.email}
+class User(BaseModel):
+    email: str
+    disabled: Optional[bool] = None
 
-# ✅ Whoami endpoint (check session)
-@app.get("/me")
-def me(session: str = Cookie(default=None)):
-    email = verify_session(session)
-    if not email:
-        return {"logged_in": False}
-    return {"logged_in": True, "email": email}
+class UserIn(BaseModel):
+    email: str
+    password: str
 
-# ✅ Google OAuth2 (redirect-style) login
-@app.get("/login/google")
-async def login_via_google(request: Request):
-    redirect_uri = request.url_for("auth_callback")
-    return await oauth.google.authorize_redirect(request, redirect_uri)
+class UserInDB(User):
+    hashed_password: str
 
-@app.get("/auth/callback")
-async def auth_callback(request: Request):
-    token = await oauth.google.authorize_access_token(request)
-    user_info = token.get('userinfo')
-    if not user_info:
-        raise HTTPException(status_code=400, detail="Failed to get user info")
+# Mock users database - replace with real DB
+fake_users_db = {
+    "user@example.com": {
+        "email": "user@example.com",
+        "hashed_password": pwd_context.hash("password"),
+        "disabled": False,
+    }
+}
 
-    email = user_info['email']
-    with Session(engine) as session:
-        user = session.exec(select(User).where(User.email == email)).first()
-        if not user:
-            user = User(email=email)
-            session.add(user)
-            session.commit()
-            session.refresh(user)
+# Auth functions
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
 
-    return RedirectResponse(url="/frontend/dashboard.html")
+def get_user(db, email: str):
+    if email in db:
+        user_dict = db[email]
+        return UserInDB(**user_dict)
 
-# ✅ Google One-Tap or JS-based token login
-@app.post("/auth/google")
-async def google_login(request: Request):
-    data = await request.json()
-    token = data.get("token")
+def authenticate_user(fake_db, email: str, password: str):
+    user = get_user(fake_db, email)
+    if not user:
+        return False
+    if not verify_password(password, user.hashed_password):
+        return False
+    return user
 
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+# Dependency for getting current user
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
     try:
-        idinfo = id_token.verify_oauth2_token(
-            token, google_requests.Request(), os.getenv("GOOGLE_CLIENT_ID")
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = TokenData(email=email)
+    except jwt.PyJWTError:
+        raise credentials_exception
+    user = get_user(fake_users_db, email=token_data.email)
+    if user is None:
+        raise credentials_exception
+    return user
+
+# Authentication routes
+@app.post("/token", response_model=Token)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
 
-        email = idinfo.get("email")
+# API routes for authentication
+@app.post("/api/auth/login")
+async def login(email: str, password: str):
+    user = authenticate_user(fake_users_db, email, password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password"
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    return {
+        "logged_in": True,
+        "email": user.email,
+        "access_token": access_token
+    }
+
+@app.post("/login")
+async def login(user: UserIn, response: Response):
+    db_user = get_user_by_email(user.email)  # implement this function
+    if not db_user or not pwd_context.verify(user.password, db_user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    token = create_access_token({"sub": user.email})
+    # Set JWT as HTTP-only cookie
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60
+    )
+    return {"message": "Login successful", "token": token}
+
+@app.get("/api/auth/session")
+async def session(current_user: User = Depends(get_current_user)):
+    return {
+        "authenticated": True,
+        "user": {
+            "email": current_user.email
+        }
+    }
+
+@app.get("/me")
+async def me(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        return {"logged_in": False}
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email = payload.get("sub")
         if not email:
-            raise HTTPException(status_code=400, detail="Invalid token")
+            return {"logged_in": False}
+        return {"logged_in": True, "email": email}
+    except jwt.ExpiredSignatureError:
+        return {"logged_in": False}
+    except jwt.PyJWTError:
+        return {"logged_in": False}
 
-        with Session(engine) as session:
-            user = session.exec(select(User).where(User.email == email)).first()
-            if not user:
-                user = User(email=email)
-                session.add(user)
-                session.commit()
-                session.refresh(user)
+@app.post("/api/auth/refresh")
+async def refresh_token(current_user: User = Depends(get_current_user)):
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": current_user.email}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
 
-        return {"success": True, "email": email}
-
-    except Exception as e:
-        return JSONResponse(status_code=400, content={"success": False, "detail": str(e)})
-
-# ✅ Logout route (clear session cookie)
 @app.post("/logout")
-def logout(response: Response):
-    response.delete_cookie(key="session")  # Delete the session cookie
-    return {"message": "Logged out successfully"}
+@app.post("/api/auth/logout")
+async def logout(response: Response):
+    response.delete_cookie("access_token")
+    return {"message": "Logged out"}
+
+# Default route
+@app.get("/")
+async def root():
+    return {"message": "Welcome to Traffy API"}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

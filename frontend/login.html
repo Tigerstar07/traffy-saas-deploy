@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Traffy Admin</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/svg+xml" href="images/Traffy1 icon.png" />
+    <style>
+        .admin-container {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 80px auto 0;
+        }
+
+        .admin-section {
+            background: rgba(20, 30, 48, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-section h2 {
+            color: #7fd0ff;
+            margin-top: 0;
+            border-bottom: 1px solid rgba(127, 208, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .admin-restricted {
+            text-align: center;
+            padding: 50px;
+            color: #ff5555;
+            font-size: 1.2em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(127, 208, 255, 0.2);
+        }
+
+        th {
+            background-color: rgba(30, 40, 58, 0.8);
+            color: #7fd0ff;
+        }
+
+        tr:hover {
+            background-color: rgba(30, 40, 58, 0.5);
+        }
+
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: rgba(30, 40, 58, 0.7);
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            color: #ddd;
+        }
+
+        .tab.active {
+            background: rgba(20, 30, 48, 0.7);
+            color: #7fd0ff;
+            border-bottom: 2px solid #7fd0ff;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="stars-canvas"></canvas>
+
+    <header class="top-nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">Traffy</a>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html#features">Features</a>
+                <a href="index.html#apps">Apps</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="index.html#updates">Updates</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="admin.html" class="active">Admin</a>
+                <span id="nav-user-status"
+                    style="margin-left:18px; color:#7fd0ff; font-weight:600; font-size:13px;"></span>
+                <a href="#" id="logoutBtn" style="margin-left:10px; color:#f55; font-size:13px; font-weight:600;">Log
+                    out</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <div id="admin-content">
+            <div class="admin-tabs">
+                <div class="tab active" data-tab="users">Users</div>
+                <div class="tab" data-tab="system">System</div>
+                <div class="tab" data-tab="logs">Logs</div>
+            </div>
+
+            <div class="admin-section" id="users-section">
+                <h2>User Management</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Plan</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1001</td>
+                            <td>user1@example.com</td>
+                            <td>Active</td>
+                            <td>Premium</td>
+                            <td><a href="#">Edit</a> | <a href="#">Suspend</a></td>
+                        </tr>
+                        <tr>
+                            <td>1002</td>
+                            <td>user2@example.com</td>
+                            <td>Active</td>
+                            <td>Basic</td>
+                            <td><a href="#">Edit</a> | <a href="#">Suspend</a></td>
+                        </tr>
+                        <tr>
+                            <td>1003</td>
+                            <td>user3@example.com</td>
+                            <td>Suspended</td>
+                            <td>Premium</td>
+                            <td><a href="#">Edit</a> | <a href="#">Activate</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="admin-section" id="system-section" style="display: none;">
+                <h2>System Settings</h2>
+                <p>System configuration and maintenance options will be implemented in a future update.</p>
+            </div>
+
+            <div class="admin-section" id="logs-section" style="display: none;">
+                <h2>System Logs</h2>
+                <p>Activity logs and system events will be displayed here.</p>
+            </div>
+        </div>
+
+        <div id="admin-restricted" class="admin-restricted" style="display: none;">
+            <h2>Admin Access Restricted</h2>
+            <p>You do not have permission to access the admin area.</p>
+            <p>Please contact your system administrator if you believe this is an error.</p>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Check if user is logged in and is an admin
+        async function checkAdminStatus() {
+            try {
+                const res = await fetch('/me');
+                const data = await res.json();
+                const navStatus = document.getElementById('nav-user-status');
+
+                if (data.logged_in) {
+                    let username = data.email.split('@')[0];
+                    if (navStatus) navStatus.innerHTML = `<span style='font-size:13px;'>👤 ${username}</span>`;
+
+                    // Check if user is admin (this is a placeholder - replace with actual admin check)
+                    const isAdmin = data.role === 'admin'; // Assuming your API returns a 'role' field
+
+                    if (isAdmin) {
+                        document.getElementById('admin-content').style.display = 'block';
+                        document.getElementById('admin-restricted').style.display = 'none';
+                    } else {
+                        document.getElementById('admin-content').style.display = 'none';
+                        document.getElementById('admin-restricted').style.display = 'block';
+                    }
+                } else {
+                    // Redirect to login if not logged in
+                    window.location.href = 'index.html';
+                }
+            } catch (e) {
+                // Redirect to login if error
+                window.location.href = 'index.html';
+            }
+        }
+        checkAdminStatus();
+
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Update active tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Hide all sections
+                document.querySelectorAll('.admin-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+
+                // Show selected section
+                const tabName = tab.getAttribute('data-tab');
+                document.getElementById(`${tabName}-section`).style.display = 'block';
+            });
+        });
+
+        // Logout functionality
+        document.getElementById('logoutBtn').onclick = async function (e) {
+            e.preventDefault();
+            await fetch('/logout', { method: 'POST' });
+            window.location.href = 'index.html';
+        };
+    </script>
+</body>
+
+</html>

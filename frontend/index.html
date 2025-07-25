@@ -95,38 +95,203 @@
     <p class="follow-text">Follow us!</p>
   </div>
 
-
   <script src="js/script.js"></script>
+  <script src="js/demo-login.js"></script>
   <script>
-    // Persistent login indicator and logout for nav bar
+    // Show error notification to user
+    function showErrorNotification(message) {
+      // Check if notification container exists, create if not
+      let notificationContainer = document.getElementById('notification-container');
+
+      if (!notificationContainer) {
+        notificationContainer = document.createElement('div');
+        notificationContainer.id = 'notification-container';
+        notificationContainer.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 9999;
+          max-width: 300px;
+        `;
+        document.body.appendChild(notificationContainer);
+      }
+
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        background-color: rgba(255, 85, 85, 0.9);
+        color: white;
+        padding: 12px 15px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        font-size: 14px;
+        transition: opacity 0.3s ease;
+      `;
+      notification.textContent = message;
+
+      // Add notification to container
+      notificationContainer.appendChild(notification);
+
+      // Remove notification after 5 seconds
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }, 5000);
+    }
+
+    // Development-friendly authentication that works with our FastAPI backend
     async function checkUserStatus() {
       try {
-        const res = await fetch('/me');
-        const data = await res.json();
-        const navStatus = document.getElementById('nav-user-status');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const dashboardLink = document.getElementById('dashboardLink');
-        const dashboardBtn = document.getElementById('dashboardBtn');
-        if (data.logged_in) {
-          let username = data.email.split('@')[0];
-          if (navStatus) navStatus.innerHTML = `<span style='font-size:13px;'>👤 ${username}</span>`;
-          if (logoutBtn) logoutBtn.style.display = '';
-          if (dashboardLink) dashboardLink.style.display = '';
-          if (dashboardBtn) dashboardBtn.style.display = '';
-        } else {
-          if (navStatus) navStatus.innerHTML = '';
-          if (logoutBtn) logoutBtn.style.display = 'none';
-          if (dashboardLink) dashboardLink.style.display = 'none';
-          if (dashboardBtn) dashboardBtn.style.display = 'none';
+        // Check if running locally without a backend
+        const isLocalFileSystem = window.location.protocol === 'file:';
+
+        if (isLocalFileSystem) {
+          // For local development without a backend server
+          simulateAuthStatus();
+          return;
         }
-      } catch (e) { }
+
+        // Try to get user session from backend with improved error handling
+        const response = await fetch('/me', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+          }
+        });
+
+        if (!response.ok) {
+          // Handle HTTP errors properly
+          if (response.status === 401) {
+            // Authentication error - user not logged in, clear session silently
+            clearUserSession();
+          } else if (response.status === 403) {
+            console.error('Authorization error: Forbidden access');
+            clearUserSession();
+          } else {
+            console.error(`Server error! Status: ${response.status}`);
+            // Only show notification for unexpected errors
+            if (response.status >= 500) {
+              showErrorNotification(`Server error (${response.status}). Please try again later.`);
+            }
+          }
+          return;
+        }
+
+        const data = await response.json();
+        updateUIForLoggedInUser(data);
+      } catch (error) {
+        // Handle network errors and other exceptions
+        console.error('Authentication check failed:', error);
+
+        // Check if it's a network error (offline)
+        if (error instanceof TypeError && error.message.includes('network')) {
+          showErrorNotification('Network error. Please check your internet connection.');
+        } else {
+          // Fallback to local storage authentication for development
+          simulateAuthStatus();
+        }
+      }
     }
+
+    // Use localStorage to simulate auth state when backend is unavailable
+    function simulateAuthStatus() {
+      const isLoggedIn = localStorage.getItem('demo_logged_in') === 'true';
+      const email = localStorage.getItem('demo_email');
+
+      if (isLoggedIn && email) {
+        updateUIForLoggedInUser({ logged_in: true, email: email });
+      } else {
+        clearUserSession();
+      }
+    }
+
+    // Update UI elements for logged in user
+    function updateUIForLoggedInUser(data) {
+      if (!data.logged_in) {
+        clearUserSession();
+        return;
+      }
+
+      const navStatus = document.getElementById('nav-user-status');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const dashboardLink = document.getElementById('dashboardLink');
+      const dashboardBtn = document.getElementById('dashboardBtn');
+
+      let username = data.email.split('@')[0];
+      if (navStatus) navStatus.innerHTML = `<span style='font-size:13px;'>👤 ${username}</span>`;
+      if (logoutBtn) logoutBtn.style.display = '';
+      if (dashboardLink) dashboardLink.style.display = '';
+      if (dashboardBtn) dashboardBtn.style.display = '';
+    }
+
+    // Clear all user session data from UI
+    function clearUserSession() {
+      const navStatus = document.getElementById('nav-user-status');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const dashboardLink = document.getElementById('dashboardLink');
+      const dashboardBtn = document.getElementById('dashboardBtn');
+
+      if (navStatus) navStatus.innerHTML = '';
+      if (logoutBtn) logoutBtn.style.display = 'none';
+      if (dashboardLink) dashboardLink.style.display = 'none';
+      if (dashboardBtn) dashboardBtn.style.display = 'none';
+    }
+
+    // Initialize on page load
     checkUserStatus();
 
+    // Logout function that works with or without backend
     document.getElementById('logoutBtn').onclick = async function (e) {
       e.preventDefault();
-      await fetch('/logout', { method: 'POST' });
-      window.location.reload();
+
+      try {
+        // Try server logout first with proper error handling
+        const response = await fetch('/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+          }
+        });
+
+        if (!response.ok) {
+          // Handle HTTP errors
+          if (response.status >= 500) {
+            console.error(`Logout server error! Status: ${response.status}`);
+            showErrorNotification('Server error during logout. Your session may still be active on the server.');
+          } else {
+            console.warn(`Logout warning: HTTP status ${response.status}`);
+          }
+        }
+      } catch (error) {
+        // Handle network errors and other exceptions
+        console.error('Logout error:', error);
+
+        if (error instanceof TypeError && error.message.includes('network')) {
+          showErrorNotification('Network error during logout. Please check your connection.');
+        }
+      } finally {
+        // Always clear local storage data regardless of server response
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('demo_logged_in');
+        localStorage.removeItem('demo_email');
+
+        clearUserSession();
+        window.location.href = 'index.html';
+      }
+    };
+
+    // Demo login function - for development only
+    window.demoLogin = function () {
+      localStorage.setItem('demo_logged_in', 'true');
+      localStorage.setItem('demo_email', 'demo@example.com');
+      checkUserStatus();
     };
   </script>
 </body>
