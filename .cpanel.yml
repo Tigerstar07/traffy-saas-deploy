@@ -1,0 +1,28 @@
+deployment:
+  tasks:
+    # Define your deploy path
+    - export DEPLOY_PATH=/home2/traffylv/public_html/SAAS
+
+    # Print start message
+    - /bin/echo "Starting deployment to $DEPLOY_PATH"
+
+    # Copy files to your public_html folder
+    - /bin/rsync -av --delete ./ $DEPLOY_PATH
+
+    # Install Python dependencies (if requirements.txt exists)
+    - if [ -f $DEPLOY_PATH/backend/requirements.txt ]; then
+        /usr/local/bin/python3.11 -m pip install -r $DEPLOY_PATH/backend/requirements.txt --user;
+      fi
+
+    # Install Node dependencies (if package.json exists)
+    - if [ -f $DEPLOY_PATH/frontend/package.json ]; then
+        cd $DEPLOY_PATH/frontend && /usr/local/bin/npm install;
+      fi
+
+    # Restart Python app (if using passenger_wsgi or uvicorn)
+    - if [ -f $DEPLOY_PATH/tmp/restart.txt ]; then
+        touch $DEPLOY_PATH/tmp/restart.txt;
+      fi
+
+    # Print completion message
+    - /bin/echo "Deployment completed successfully!"
