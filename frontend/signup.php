@@ -1,5 +1,5 @@
-<?php include "functions.php"; ?>
-<?php include "db.php"; ?>
+<?php include "../php/includes/functions.php"; ?>
+<?php include "../php/includes/db.php"; ?>
 
 <!DOCTYPE html>
 <html lang="en">
