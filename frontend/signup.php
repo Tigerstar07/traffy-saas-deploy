@@ -1,4 +1,4 @@
-<!--<?php include "../php/includes/functions.php"; ?>-->
+<?php include "../php/includes/functions.php"; ?>
 <?php include "../php/includes/db.php"; ?>
 
 <?php $included_files = get_included_files();
