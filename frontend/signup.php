@@ -1,9 +1,6 @@
 <?php include "../php/includes/functions.php"; ?>
 <?php include "../php/includes/db.php"; ?>
 
-<?php print_r(get_included_files());
-
-?>
 
 <!DOCTYPE html>
 <html lang="en">
