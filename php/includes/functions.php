@@ -61,7 +61,7 @@ function register_user(){
             $surname = escape($_POST['last']);
             $email = escape(strtolower($_POST['email']));            
             $password = escape($_POST['password']);
-            $password = password_hash( $password, PASSWORD_BCRYPT, array('cost' => 12));
+            $password = password_hash( $password, PASSWORD_BCRYPT, array('cost' => 13));
 
             if (isset($_POST['news']) && $_POST['news'] == 'yes') 
             {

@@ -35,19 +35,19 @@
             <h2>Welcome to Traffy</h2>
             <p class="signup-subtitle">Sign up or log in to start your journey to an easier every day!</p>
             <div id="user-status" style="margin-bottom: 16px;"></div>
-            <form id="signupForm">
+            <form id="signupForm" action="" method="post">
                 <div class="name-row">
                     <div class="input-group">
                         <label for="c_name">Company name</label>
                         <div class="glow-wrapper">
-                            <input type="text" id="c_name" placeholder="SIA Piemērs" />
+                            <input type="text" id="c_name" placeholder="SIA Piemērs" name="c_name"/>
                             <div class="glow"></div>
                         </div>
                     </div>
                     <div class="input-group">
                         <label for="c_r_number">Registration number</label>
                         <div class="glow-wrapper">
-                            <input type="text" id="c_r_number" placeholder="00000000000" />
+                            <input type="text" id="c_r_number" onKeyPress="if(this.value.length==11) return false;" placeholder="00000000000" name="c_r_number"/>
                             <div class="glow"></div>
                         </div>
                     </div>
@@ -56,14 +56,14 @@
                     <div class="input-group">
                         <label for="first">First name</label>
                         <div class="glow-wrapper">
-                            <input type="text" id="first" placeholder="Jānis" />
+                            <input type="text" id="first" placeholder="Jānis" name="first"/>
                             <div class="glow"></div>
                         </div>
                     </div>
                     <div class="input-group">
                         <label for="last">Last name</label>
                         <div class="glow-wrapper">
-                            <input type="text" id="last" placeholder="Ozoliņš" />
+                            <input type="text" id="last" placeholder="Ozoliņš" name="last"/>
                             <div class="glow"></div>
                         </div>
                     </div>
@@ -71,14 +71,14 @@
                 <div class="input-group">
                     <label for="email">Email Address</label>
                     <div class="glow-wrapper">
-                        <input type="email" id="email" placeholder="piemers@piemers.lv" required />
+                        <input type="email" id="email" placeholder="piemers@piemers.lv" required name="email"/>
                         <div class="glow"></div>
                     </div>
                 </div>
                 <div class="input-group">
                     <label for="password">Password</label>
                     <div class="glow-wrapper">
-                        <input type="password" id="password" placeholder="••••••••" required />
+                        <input type="password" id="password" placeholder="••••••••" required name="password"/>
                         <div class="glow"></div>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
                             </div>
                         </div>
                 <div class="glow-wrapper">
-                    <button type="submit">Sign up →</button>
+                    <button type="submit" name="register">Sign up →</button>
                     <div class="glow"></div>
                 </div>
                 <div style="margin-top: 18px; text-align: center;">
