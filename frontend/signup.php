@@ -3,13 +3,7 @@
 
 <?php 
 
-if (isset($_POST)) {
-    // The $_POST variable exists
-    echo 'The $_POST variable exists';
-} else {
-    // The $_POST variable does not exist
-    echo 'The $_POST variable does not exist';
-}
+register_user();
 
 ?>
 
