@@ -14,7 +14,7 @@
 
 $connection = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
-mysqli_set_charset($connection,"utf8mb3");
+mysqli_set_charset($connection,"utf8mb4");
 
     if(!$connection) {
 
@@ -22,7 +22,8 @@ mysqli_set_charset($connection,"utf8mb3");
 
     } else {
 
-        echo "Connection succesfully!";
+        echo "Connection successfully!";
+
     }
 
 ?>
