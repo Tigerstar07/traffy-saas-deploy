@@ -1,5 +1,5 @@
-<?php include "../php/includes/functions.php"; ?>
-<?php include "../php/includes/db.php"; ?>
+<?php include "https://traffy.lv/SAAS/php/includes/functions.php"; ?>
+<?php include "https://traffy.lv/SAAS/php/includes/db.php"; ?>
 
 <!DOCTYPE html>
 <html lang="en">
