@@ -1,6 +1,12 @@
 <?php include "../php/includes/functions.php"; ?>
 <?php include "../php/includes/db.php"; ?>
 
+<?php 
+
+print_r($_POST);
+
+?>
+
 
 <!DOCTYPE html>
 <html lang="en">
