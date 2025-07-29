@@ -22,7 +22,7 @@ mysqli_set_charset($connection,"utf8mb3");
 
     } else {
 
-        echo "Connection succesfully!"
+        echo "Connection succesfully!";
     }
 
 ?>
