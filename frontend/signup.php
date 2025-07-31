@@ -57,7 +57,7 @@ register_user();
                     <div class="input-group">
                         <label for="c_r_number">Registration number</label>
                         <div class="glow-wrapper">
-                            <input type="text" id="c_r_number" onKeyPress="if(this.value.length==11) return false;" placeholder="00000000000" name="c_r_number"/>
+                            <input type="number" id="c_r_number" onKeyPress="if(this.value.length==11) return false;" placeholder="00000000000" name="c_r_number"/>
                             <div class="glow"></div>
                         </div>
                     </div>
