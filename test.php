@@ -17,7 +17,7 @@ register_user();
     <label for="c_name">Kompānijas nosaukums</label><br>
     <input type="text" id="c_name" placeholder="SIA Piemērs" name="c_name"/><br>
     <label for="c_r_number">Reģistrācijas numurs</label><br>
-    <input type="text" id="c_r_number" onKeyPress="if(this.value.length==11) return false;" placeholder="00000000000" name="c_r_number"/><br>
+    <input type="number" id="c_r_number" onKeyPress="if(this.value.length==11) return false;" placeholder="00000000000" name="c_r_number"/><br>
     <label for="first">Vārds</label></br>
     <input type="text" id="first" placeholder="Jānis" name="first"/><br>
     <label for="last">Uzvārds</label></br>
