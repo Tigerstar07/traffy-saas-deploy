@@ -27,7 +27,7 @@ register_user();
     <label for="password">Password</label></br>
     <input type="password" id="password" placeholder="••••••••" required name="password"/>
     <input class="form-check-input" type="checkbox" value="yes" id="commercials" name="news"></br>
-    <label class="form-check-label" for="ligumaNoteikumi">Vēlos saņemt jaunumus epastā.</label> 
+    <label class="form-check-label" for="ligumaNoteikumi">Vēlos saņemt jaunumus epastā.</label></br>
     <button type="submit" name="register">Sign up →</button>
 </form>
 
