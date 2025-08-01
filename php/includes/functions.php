@@ -163,10 +163,10 @@ function login_user(){
 
         if(isset($_POST['login'])){
 
-        $email = strtolower(escape($_POST['login_email']));
-        $password = escape($_POST['login_password']);
+        $reg_nr = escape($_POST['c_r_number']);
+        $password = escape($_POST['password']);
         
-        $query = "SELECT * FROM users WHERE email = '$email' ";
+        $query = "SELECT * FROM users WHERE comp_reg_number = '$reg_nr' ";
         $select_user_query = mysqli_query($connection, $query);
         if (!$select_user_query) {
    
