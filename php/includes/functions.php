@@ -194,7 +194,7 @@ function login_user(){
    
             } else {
    
-              $eroor = "Ievadīti nepareizi pieslēgšanās dati!";
+              $error = "Ievadīti nepareizi pieslēgšanās dati!";
             }
    
    
