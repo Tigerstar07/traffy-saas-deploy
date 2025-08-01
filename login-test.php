@@ -19,7 +19,7 @@ login_user();
     <input type="number" id="c_r_number" onKeyPress="if(this.value.length==11) return false;" placeholder="00000000000" name="c_r_number"/><br>
     
     <label for="password">Parole</label></br>
-    <input type="password" id="password" placeholder="••••••••" required name="password"/><br>
+    <input type="password" id="password" placeholder="••••••••" required name="password"/></br>
     
     <button type="submit" name="login">Pieteikties</button>
 </form>
