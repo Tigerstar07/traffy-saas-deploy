@@ -183,12 +183,14 @@ function login_user(){
    
             if (password_verify($password,$db_user_password)) {
    
-                $_SESIION['id'] = $db_user_id;
+             /*   $_SESIION['id'] = $db_user_id;
                 $_SESSION['email'] = $db_email;
                 $_SESSION['name'] = $db_user_firstname;
                 $_SESSION['surname'] = $db_user_lastname;
                 
-                redirect("shop.php");
+                redirect("shop.php"); */
+
+                echo "<script type='text/javascript'>alert('Esat veiksmīgi ielogjies sistēmā!');</script>";
    
             } else {
    
