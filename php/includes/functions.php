@@ -173,13 +173,13 @@ function login_user(){
             die("QUERY FAILED" . mysqli_error($connection));
    
         }
-        while ($row = mysqli_fetch_array($select_user_query)) {
+    while ($row = mysqli_fetch_array($select_user_query)) {
    
             $db_user_id = $row['id'];
             $db_email = $row['email'];
             $db_user_password = $row['password'];
             $db_user_firstname = $row['name'];
-            $db_user_lastname = $row['surname'];        
+            $db_user_lastname = $row['surname'];   */     
    
             if (password_verify($password,$db_user_password)) {
    
@@ -193,8 +193,9 @@ function login_user(){
                 echo "<script type='text/javascript'>alert('Esat veiksmīgi ielogjies sistēmā!');</script>";
    
             } else {
-   
-              $error = "Ievadīti nepareizi pieslēgšanās dati!";
+                
+                echo "<script type='text/javascript'>alert('Ievadīti nepareizi pieslēgšanās dati!');</script>";
+              //$error = "Ievadīti nepareizi pieslēgšanās dati!";
             }
    
    
