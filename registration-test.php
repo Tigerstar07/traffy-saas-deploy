@@ -11,9 +11,8 @@ register_user();
 <html>
 
 <head>
-
-
-
+    <meta charset="utf-8">
+    <meta http-equiv="content-language" content="lv" />
 </head>
 <body>
 
