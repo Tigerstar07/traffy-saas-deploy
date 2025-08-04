@@ -175,11 +175,11 @@ function login_user(){
             
             }
 
-        $count = $stmt->get_result();
+        $result = $stmt->get_result();
         
         $stmt->close();
 
-        if($count->num_rows < 1){
+        if($result->num_rows < 1){
 
            echo "<script type='text/javascript'>alert('Ievadīti nepareizi pieslēguma dati, pārbaudiet datus un mēģinat vēlreiz!');</script>";
             
@@ -193,7 +193,7 @@ function login_user(){
             die("QUERY FAILED" . mysqli_error($connection));
    
         } */
-            while ($row = mysqli_fetch_array($select_user_query)) {
+            while ($row = mysqli_fetch_array($result)) {
    
             $db_user_id = $row['id'];
             $db_email = $row['email'];
