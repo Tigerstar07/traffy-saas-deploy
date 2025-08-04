@@ -9,6 +9,12 @@ register_user();
 
 <!DOCTYPE html>
 <html>
+
+<head>
+
+
+
+</head>
 <body>
 
 <h2>Testa forma</h2>
@@ -32,6 +38,8 @@ register_user();
     <label class="form-check-label" for="ligumaNoteikumi">Vēlos saņemt jaunumus epastā.</label></br>
     <button type="submit" name="register">Reģistrēties</button>
 </form>
+
+<script src="/lv/js/scripts.js"></script>
 
 </body>
 </html>
