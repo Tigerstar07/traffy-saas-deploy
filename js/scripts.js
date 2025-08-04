@@ -60,6 +60,8 @@ if (isEmail($("#email").val()) == false) {
                             
           }
 /*Pārbauda vai paroles ir vienādas*/
+    
+var kluda = "";
 
  if ($("#password").val() != $("#password_conf").val()) {
 					
