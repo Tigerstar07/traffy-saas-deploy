@@ -43,11 +43,13 @@ $(document).ready(function(){
             }  
         }
 
-/* Pārbauda vai paroles ir vienādas; e-pasta formāta pārbaude*/
+/* Reģistrācijas formas pārbaude*/
 
   $("#signupForm").submit(function(e) {
     
     var kluda = "";
+
+/*E-pasta formāta pārbaude*/
 
 if (isEmail($("#email").val()) == false) {
 
@@ -56,6 +58,7 @@ if (isEmail($("#email").val()) == false) {
               alert(emailError);
                             
           }
+/*Pārbauda vai paroles ir vienādas*/
 
  if ($("#password").val() != $("#password_conf").val()) {
 					
