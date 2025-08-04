@@ -20,6 +20,10 @@ mysqli_set_charset($connection,"utf8mb4");
 
         die("Databse connection failed!" . mysqly_error($connection));
 
-    } 
+    } else {
+
+      echo "Konekcija veiksmīga!";
+      
+    }
 
 ?>
