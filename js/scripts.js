@@ -70,7 +70,7 @@ if (isEmail($("#email").val()) == false) {
 					
            kluda = "Ievadītās paroles nav vienādas!";
            alert(kluda);
-            
+ }       
         
 
      if (kluda != "") {
