@@ -43,7 +43,7 @@ $(document).ready(function(){
             }  
         }
 
-/* Pārbauda vai paroles ir vienādas*/
+/* Pārbauda vai paroles ir vienādas; e-pasta formāta pārbaude*/
 
   $("#signupForm").submit(function(e) {
     
