@@ -185,14 +185,6 @@ function login_user(){
             
        } else {
 
-        
-       /* $query = "SELECT * FROM users WHERE comp_reg_number = '$reg_nr' ";
-        $select_user_query = mysqli_query($connection, $query);
-        if (!$select_user_query) {
-   
-            die("QUERY FAILED" . mysqli_error($connection));
-   
-        } */
             while ($row = mysqli_fetch_array($result)) {
    
             $db_user_id = $row['id'];
