@@ -26,6 +26,8 @@ register_user();
     <input type="email" id="email" placeholder="piemers@piemers.lv" required name="email"/><br>
     <label for="password">Parole</label></br>
     <input type="password" id="password" placeholder="••••••••" required name="password"/><br>
+    <label for="password">Parole atkārtoti</label></br>
+    <input type="password" id="password_conf" placeholder="••••••••" required name="password_conf"/><br>
     <input class="form-check-input" type="checkbox" value="yes" id="commercials" name="news">
     <label class="form-check-label" for="ligumaNoteikumi">Vēlos saņemt jaunumus epastā.</label></br>
     <button type="submit" name="register">Reģistrēties</button>
