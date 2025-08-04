@@ -165,15 +165,35 @@ function login_user(){
 
         $reg_nr = escape($_POST['c_r_number']);
         $password = escape($_POST['password']);
+
+        $stmt = $connection->prepare("SELECT * FROM users WHERE comp_reg_number = ?");
+        $stmt->bind_param("i", $reg_nr);
+        $stmt->execute();
+
+        if(!$stmt) {
+            die('QUERY FAILED'. mysqli_error($connection));
+            
+            }
+
+        $count = $stmt->get_result();
         
-        $query = "SELECT * FROM users WHERE comp_reg_number = '$reg_nr' ";
+        $stmt->close();
+
+        if($count->num_rows < 1){
+
+           echo "<script type='text/javascript'>alert('Ievadīti nepareizi pieslēguma dati, pārbaudiet datus un mēģinat vēlreiz!');</script>";
+            
+       } else {
+
+        
+       /* $query = "SELECT * FROM users WHERE comp_reg_number = '$reg_nr' ";
         $select_user_query = mysqli_query($connection, $query);
         if (!$select_user_query) {
    
             die("QUERY FAILED" . mysqli_error($connection));
    
-        }
-        while ($row = mysqli_fetch_array($select_user_query)) {
+        } */
+            while ($row = mysqli_fetch_array($select_user_query)) {
    
             $db_user_id = $row['id'];
             $db_email = $row['email'];
