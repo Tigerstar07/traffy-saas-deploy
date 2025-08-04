@@ -32,7 +32,8 @@ register_user();
     <input type="email" id="email" placeholder="piemers@piemers.lv" required name="email"/>
     <span><small><p id="email_error"></p></small></span>
     <label for="password">Parole</label></br>
-    <input type="password" id="password" placeholder="••••••••" required name="password"/><br></br>
+    <input type="password" id="password" placeholder="••••••••" required name="password"/>
+    <span><small><p id="password_good"></p></small></span>
     <label for="password">Parole atkārtoti</label></br>
     <input type="password" id="password_conf" placeholder="••••••••" required name="password_conf"/>
     <span><small><p id="password_confirm_error"></p></small></span>

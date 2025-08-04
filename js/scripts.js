@@ -8,7 +8,7 @@ $(document).ready(function(){
 
      /* Paroles stipruma pārbaude */
         $('#password').keyup(function () {  
-            $('#password').html(checkStrength($('#password').val()))  
+            $('#password_good').html(checkStrength($('#password').val()))  
         })  
         function checkStrength(password) {  
             var strength = 0  
