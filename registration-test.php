@@ -30,7 +30,7 @@ register_user();
     <input type="text" id="last" placeholder="Ozoliņš" name="last"/><br></br>
     <label for="email">E-pasta adrese</label></br>
     <input type="email" id="email" placeholder="piemers@piemers.lv" required name="email"/>
-    <span><small><p id="email_error"></p></small></span><br></br>
+    <span><small><p id="email_error"></p></small></span>
     <label for="password">Parole</label></br>
     <input type="password" id="password" placeholder="••••••••" required name="password"/><br></br>
     <label for="password">Parole atkārtoti</label></br>
