@@ -183,7 +183,7 @@ function login_user(){
 
            echo "<script type='text/javascript'>alert('Ievadīti nepareizi pieslēguma dati, pārbaudiet datus un mēģinat vēlreiz!');</script>";
             
-       } 
+       } else {
 
         
        /* $query = "SELECT * FROM users WHERE comp_reg_number = '$reg_nr' ";
@@ -219,7 +219,9 @@ function login_user(){
             }
    
    
-        }
+            }
+
+        }  
 
         }
    
