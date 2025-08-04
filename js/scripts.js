@@ -54,20 +54,18 @@ $(document).ready(function(){
 if (isEmail($("#email").val()) == false) {
 
                
-              emailError = "Ievadītā epasta adrese nav derīga.";
-              $("#email_error").html(emailError);
-              kluda += " ";
-              $("#email_error").show();
+              kluda = "Ievadītā epasta adrese nav derīga.";
+              $("#email_error").html(kluda);
+            
                             
           }
 /*Pārbauda vai paroles ir vienādas*/
 
  if ($("#password").val() != $("#password_conf").val()) {
 					
-            passwordConfirmError += "Ievadītās paroles nav vienādas!";
-            $("#password_confirm_error").html(passwordConfirmError);
-            kluda += " ";
-            $("#password_confirm_error").show();
+            kluda += "Ievadītās paroles nav vienādas!";
+            $("#password_confirm_error").html(kluda);
+            
                       
             //alert(kluda);
         } 
