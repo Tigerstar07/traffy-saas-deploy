@@ -55,15 +55,19 @@ if (isEmail($("#email").val()) == false) {
 
                
               emailError = "Ievadītā epasta adrese nav derīga.";
-               $("#email_error").html(kluda);
+              $("#email_error").html(emailError);
+              kluda += " ";
+              $("#email_error").show();
                             
           }
 /*Pārbauda vai paroles ir vienādas*/
 
  if ($("#password").val() != $("#password_conf").val()) {
 					
-            kluda += "Ievadītās paroles nav vienādas!";
-            $("#password_confirm_error").html(kluda);
+            passwordConfirmError += "Ievadītās paroles nav vienādas!";
+            $("#password_confirm_error").html(passwordConfirmError);
+            kluda += " ";
+            $("#password_confirm_error").show();
                       
             //alert(kluda);
         } 
