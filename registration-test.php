@@ -34,7 +34,7 @@ register_user();
     <input type="password" id="password" placeholder="••••••••" required name="password"/><br></br>
     <label for="password">Parole atkārtoti</label></br>
     <input type="password" id="password_conf" placeholder="••••••••" required name="password_conf"/>
-    <span><small>1</small></span><br></br>
+    <span><small class="border">1</small></span><br></br>
     <input class="form-check-input" type="checkbox" value="yes" id="commercials" name="news">
     <label class="form-check-label" for="ligumaNoteikumi">Vēlos saņemt jaunumus epastā.</label><br></br>
     <button type="submit" name="register">Reģistrēties</button>
