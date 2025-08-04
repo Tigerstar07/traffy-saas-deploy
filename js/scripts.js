@@ -63,10 +63,10 @@ if (isEmail($("#email").val()) == false) {
  if ($("#password").val() != $("#password_conf").val()) {
 					
             kluda += "Ievadītās paroles nav vienādas!";
-            $("#password_confirm_error").html(passwordConfirmError);
+            $("#password_confirm_error").html(kluda);
             kluda += " ";
             $("#password_confirm_error").show();           
-            alert(kluda);
+            //alert(kluda);
         } 
 
      if (kluda != "") {
