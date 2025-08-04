@@ -55,7 +55,7 @@ if (isEmail($("#email").val()) == false) {
 
                
               emailError = "Ievadītā epasta adrese nav derīga.";
-              alert(emailError);
+               $("#email_error").html(kluda);
                             
           }
 /*Pārbauda vai paroles ir vienādas*/
