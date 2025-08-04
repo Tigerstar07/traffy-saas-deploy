@@ -13,6 +13,7 @@ register_user();
 <head>
     <meta charset="utf-8">
     <meta http-equiv="content-language" content="lv" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
