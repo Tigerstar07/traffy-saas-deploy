@@ -102,58 +102,6 @@ function register_user(){
     }
 }
 
-function add_address(){
-
-    global $connection;
-    global $info;
-
-    $id = $_SESSION['id'];
-
-    if(isMethod('post')){
-        
-        if(isset($_POST['city_add'])){
-
-            $address = $_POST['address_add'];
-            $city = $_POST['city_add'];
-            $country = $_POST['country_add'];
-            $zip = $_POST['zip_add'];
-
-            $stmt = $connection->prepare("INSERT INTO `address` (`address`, `city`, `country`, `zip`, `users_id`) VALUES (?, ?, ?, ?, ?) ");
-            $stmt->bind_param("ssssi", $address, $city, $country, $zip, $id);
-            $stmt->execute();
-
-            if(!$stmt) {
-                die('QUERY FAILED'. mysqli_error($connection));
-                
-                       }
-        
-            $info = "Jaunā adrese ir pievienota.";
-           
-            
-            $stmt->close();
-        }
-    }
-}
-
-function delete_address(){
-
-    global $connection;
-    global $info;
-
-    if(isMethod('post')){
-    
-    if(isset($_POST['delete_address'])){
-    
-        $id = $_POST['delete_address'];
-        mysqli_query($connection, "DELETE FROM address WHERE id = $id ");
-
-        $info = "Adrese ir dzēsta";
-
-         }
-    }
-}
-
-
 function login_user(){
 
    global $connection;
@@ -260,6 +208,58 @@ function change_password(){
 
     }
 }
+
+function add_address(){
+
+    global $connection;
+    global $info;
+
+    $id = $_SESSION['id'];
+
+    if(isMethod('post')){
+        
+        if(isset($_POST['city_add'])){
+
+            $address = $_POST['address_add'];
+            $city = $_POST['city_add'];
+            $country = $_POST['country_add'];
+            $zip = $_POST['zip_add'];
+
+            $stmt = $connection->prepare("INSERT INTO `address` (`address`, `city`, `country`, `zip`, `users_id`) VALUES (?, ?, ?, ?, ?) ");
+            $stmt->bind_param("ssssi", $address, $city, $country, $zip, $id);
+            $stmt->execute();
+
+            if(!$stmt) {
+                die('QUERY FAILED'. mysqli_error($connection));
+                
+                       }
+        
+            $info = "Jaunā adrese ir pievienota.";
+           
+            
+            $stmt->close();
+        }
+    }
+}
+
+function delete_address(){
+
+    global $connection;
+    global $info;
+
+    if(isMethod('post')){
+    
+    if(isset($_POST['delete_address'])){
+    
+        $id = $_POST['delete_address'];
+        mysqli_query($connection, "DELETE FROM address WHERE id = $id ");
+
+        $info = "Adrese ir dzēsta";
+
+         }
+    }
+}
+
 
 function edit_address(){
 
