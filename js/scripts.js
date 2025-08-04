@@ -64,8 +64,7 @@ if (isEmail($("#email").val()) == false) {
 					
             kluda += "Ievadītās paroles nav vienādas!";
             $("#password_confirm_error").html(kluda);
-            kluda += " ";
-            $("#password_confirm_error").show();           
+                      
             //alert(kluda);
         } 
 
